@@ -28,13 +28,13 @@ export const EntryList = ({ moods, entries, onEditButtonClick, onDeleteButtonCli
     <article className="panel is-primary">
       <h1 className="panel-heading">Entries</h1>
       <p className="panel-tabs">
-        <a className={moodSelected === "" ? "is-active" : ""} onClick={() => {
+        <a href="./entries" className={moodSelected === "" ? "is-active" : ""} onClick={() => {
           setEntries(entries)
           setMoodSelected("")
         }}>All</a>
         {
           moods.map(mood => {
-            return <a
+            return <a key={mood.id}
               onClick={() => filterAllEntries(mood.id)}
               className={moodSelected === mood.id ? "is-active" : ""}
             >{mood.label}</a>
@@ -59,7 +59,7 @@ export const EntryList = ({ moods, entries, onEditButtonClick, onDeleteButtonCli
             .filter(happyEntries => happyEntries.mood.label === "Happy")
         */}
       {filteredEntries.map(entry => {
-        return <div className="panel-block">
+        return <div key={entry.id} className="panel-block">
           <Entry
             key={entry.id}
             entry={entry}

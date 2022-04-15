@@ -11,7 +11,8 @@ export const DailyJournal = () => {
 
   useEffect(() => {
     getAllEntries()
-    getMoods().then(moodsData => setMoods(moodsData))
+    getMoods()
+      .then(moodsData => setMoods(moodsData))
   }, [])
 
   const getAllEntries = () => {
@@ -19,7 +20,8 @@ export const DailyJournal = () => {
   }
 
   const onEditButtonClick = (entryId) => {
-    getEntryById(entryId).then(entryData => setEntry(entryData)).then(() => console.log(entry))
+    getEntryById(entryId).then(entryData => setEntry(entryData))
+      // .then(() => console.log(entry))
   }
 
   const onDeleteButtonClick = (entryId) => {
@@ -28,7 +30,7 @@ export const DailyJournal = () => {
   }
 
   const onFormSubmit = (entryData) => {
-    console.log("submit", entryData)
+    // console.log("submit", entryData)
     if (entryData.id) {
       updateEntry(entryData).then(getAllEntries)
     } else {
@@ -37,7 +39,7 @@ export const DailyJournal = () => {
     setEntry({
       concept: "",
       entry: "",
-      moodId: 0
+      mood_id: 0
     })
   }
 
