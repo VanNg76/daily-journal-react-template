@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+// import { updateEntry } from "./EntryManager"
 
 export const EntryForm = ({ entry, moods, onFormSubmit }) => {
     const [editMode, setEditMode] = useState(false)
@@ -20,7 +21,11 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
             and change state instead of modifying current one
         */
         const newEntry = Object.assign({}, updatedEntry)
-        newEntry[event.target.name] = event.target.value
+        if (event.target.name === "mood_id") {
+            newEntry[event.target.name] = parseInt(event.target.value)
+        } else {
+            newEntry[event.target.name] = event.target.value
+        }
         setUpdatedEntry(newEntry)
     }
 
@@ -28,7 +33,7 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
 
     const constructNewEntry = () => {
         const copyEntry = { ...updatedEntry }
-        copyEntry.moodId = parseInt(copyEntry.moodId)
+        // copyEntry.mood_id = parseInt(copyEntry.mood_id)
         if (!copyEntry.date) {
             copyEntry.date = Date(Date.now()).toLocaleString('en-us').split('GMT')[0]
         }
@@ -55,7 +60,7 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
                         <label htmlFor="entry" className="label">Entry: </label>
                         <div className="control">
                             <textarea
-                                class="textarea"
+                                className="textarea"
                                 name="entry"
                                 value={updatedEntry.entry}
                                 onChange={handleControlledInputChange}
@@ -63,18 +68,19 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
                         </div>
                     </div>
                     <div className="field">
-                        <label htmlFor="moodId" className="label">Mood: </label>
+                        <label htmlFor="mood_id" className="label">Mood: </label>
                         <div className="control">
                             <div className="select">
-                                <select name="moodId"
+                                <select name="mood_id"
                                     proptype="int"
-                                    value={updatedEntry.moodId}
+                                    value={updatedEntry.mood_id}
                                     onChange={handleControlledInputChange}>
-
                                     <option value="0">Select a mood</option>
                                     {moods.map(m => (
-                                        <option key={m.id} value={m.id}>
-                                            {m.label}
+                                        <option 
+                                            selected = {updatedEntry.mood_id === m.id ? true : false}
+                                            key={m.id} value={m.id}
+                                        >{m.label}
                                         </option>
                                     ))}
                                 </select>
