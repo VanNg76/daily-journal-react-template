@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Entry } from "./Entry";
 import { searchEntries } from "./EntryManager";
 
-export const EntryList = ({ moods, entries, onEditButtonClick, onDeleteButtonClick }) => {
+export const EntryList = ({ moods, entries, tags, onEditButtonClick, onDeleteButtonClick }) => {
 
   const [filteredEntries, setEntries] = useState([]);
   const [searchedTerm, setTerm] = useState("");
-  const [moodSelected, setMoodSelected] = useState("");
+  const [moodSelected, setMoodSelected] = useState(0);
 
   useEffect(() => {
     if (searchedTerm !== "") {
@@ -16,11 +16,13 @@ export const EntryList = ({ moods, entries, onEditButtonClick, onDeleteButtonCli
     }
   }, [searchedTerm, entries])
 
-
-  const filterAllEntries = (moodId) => {
-    const filteredEntriesByMood = entries.filter(entry => entry.moodId === parseInt(moodId))
+  useEffect(() => {
+    const filteredEntriesByMood = entries.filter(entry => entry.mood_id === moodSelected)
     setEntries(filteredEntriesByMood)
-    setMoodSelected(parseInt(moodId))
+  }, [moodSelected])
+  
+  const filterAllEntries = (moodId) => {
+    setMoodSelected(moodId)
   }
 
 
@@ -28,14 +30,18 @@ export const EntryList = ({ moods, entries, onEditButtonClick, onDeleteButtonCli
     <article className="panel is-primary">
       <h1 className="panel-heading">Entries</h1>
       <p className="panel-tabs">
-        <a href="./entries" className={moodSelected === "" ? "is-active" : ""} onClick={() => {
+        <a href="http://localhost:3000/entries" className={moodSelected === "" ? "is-active" : ""} onClick={(evt) => {
+          evt.preventDefault()
           setEntries(entries)
           setMoodSelected("")
         }}>All</a>
         {
           moods.map(mood => {
-            return <a key={mood.id}
-              onClick={() => filterAllEntries(mood.id)}
+            return <a href={`http://localhost:3000/entries?mood_id=${mood.id}`} key={mood.id}
+              onClick={(evt) => {
+                evt.preventDefault()
+                filterAllEntries(mood.id)}
+              }
               className={moodSelected === mood.id ? "is-active" : ""}
             >{mood.label}</a>
           })
@@ -63,7 +69,8 @@ export const EntryList = ({ moods, entries, onEditButtonClick, onDeleteButtonCli
           <Entry
             key={entry.id}
             entry={entry}
-            mood={moods.find(m => m.id === entry.moodId)}
+            mood={moods.find(m => m.id === entry.mood_id)}
+            tags={tags}
             onEditButtonClick={onEditButtonClick}
             onDeleteButtonClick={onDeleteButtonClick}
           />
