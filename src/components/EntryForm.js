@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react"
 // import { updateEntry } from "./EntryManager"
 
-export const EntryForm = ({ entry, moods, onFormSubmit }) => {
+export const EntryForm = ({ entry, moods, tags, onFormSubmit }) => {
     const [editMode, setEditMode] = useState(false)
     const [updatedEntry, setUpdatedEntry] = useState(entry)
+    const [selectedTags, addSelectedTags] = useState([])
 
     useEffect(() => {
         setUpdatedEntry(entry)
@@ -14,6 +15,10 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
             setEditMode(false)
         }
     }, [entry])
+
+    // useEffect((t) => {
+    //     addSelectedTags(t)
+    // }, [])
 
     const handleControlledInputChange = (event) => {
         /*
@@ -37,7 +42,9 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
         if (!copyEntry.date) {
             copyEntry.date = Date(Date.now()).toLocaleString('en-us').split('GMT')[0]
         }
-        onFormSubmit(copyEntry)
+        const copySelectedTags = [...selectedTags]
+        onFormSubmit(copyEntry, copySelectedTags)
+        addSelectedTags([])
     }
 
     return (
@@ -74,12 +81,14 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
                                 <select name="mood_id"
                                     proptype="int"
                                     value={updatedEntry.mood_id}
-                                    onChange={handleControlledInputChange}>
+                                    onChange={handleControlledInputChange}
+                                >
                                     <option value="0">Select a mood</option>
-                                    {moods.map(m => (
-                                        <option 
+                                    {moods?.map(m => (
+                                        <option
                                             selected = {updatedEntry.mood_id === m.id ? true : false}
-                                            key={m.id} value={m.id}
+                                            key={m.id}
+                                            value={m.id} /* if 'value' on select equal to 'value' on an option, it will be selected*/
                                         >{m.label}
                                         </option>
                                     ))}
@@ -87,6 +96,32 @@ export const EntryForm = ({ entry, moods, onFormSubmit }) => {
                             </div>
                         </div>
                     </div>
+
+                    <fieldset>
+                        <div className="form-group">
+                            <label htmlFor="tag" className="label">Tag: </label>
+                            {tags?.map(t => (
+                                <div key={t.id}>
+                                    <input type="checkbox" value={t.id}
+                                        onChange={
+                                            (evt) => {
+                                                if (evt.target.checked) {
+                                                    let copy = [...selectedTags]
+                                                    copy.push(t.id)
+                                                    addSelectedTags(copy)
+                                                } else {
+                                                    let copy = [...selectedTags]
+                                                    copy.splice(selectedTags?.indexOf(t.id), 1)
+                                                    addSelectedTags(copy)
+                                                }
+
+                                            }
+                                        } />{t.name}
+                                </div>
+                            ))}
+                        </div>
+                    </fieldset>
+
                     <div className="field">
                         <div className="control">
                             <button type="submit"
